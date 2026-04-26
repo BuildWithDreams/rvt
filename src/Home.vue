@@ -291,22 +291,27 @@ export default {
     },
     async getCurrencyDetails(rpcUrl, currencyid, useRpc = true) {
       if (useRpc) {
-        const requestData = {
-          method: 'post',
-          url: rpcUrl,
-          headers: { 'Content-Type': 'application/json' },
-          data: {
-            method: 'getcurrency',
-            params: [currencyid],
-            id: 1
+        try {
+          const requestData = {
+            method: 'post',
+            url: rpcUrl,
+            headers: { 'Content-Type': 'application/json' },
+            data: {
+              method: 'getcurrency',
+              params: [currencyid],
+              id: 1
+            }
+          };
+          const response = await this.sendRequestRPC(requestData)
+          const result = response.data.result
+          return {
+            reservecurrencies: result.bestcurrencystate.reservecurrencies,
+            bestheight: result.bestheight,
+            supply: result.bestcurrencystate.supply
           }
-        };
-        const response = await this.sendRequestRPC(requestData)
-        const result = response.data.result
-        return {
-          reservecurrencies: result.bestcurrencystate.reservecurrencies,
-          bestheight: result.bestheight,
-          supply: result.bestcurrencystate.supply
+        } catch (error) {
+          console.error(`RPC getcurrency failed for ${currencyid}:`, error.message);
+          return null;
         }
       }
       else {
