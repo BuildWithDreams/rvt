@@ -282,12 +282,24 @@ export default {
         })
     },
     async sendRequestRPC(requestData) {
-      return await axios({
-        method: requestData.method,
-        url: requestData.url,
-        headers: requestData.headers,
-        data: requestData.data
-      });
+      try {
+        const response = await axios({
+          method: requestData.method,
+          url: requestData.url,
+          headers: requestData.headers,
+          data: requestData.data
+        });
+        // Guard against non-JSON responses (e.g. nginx error pages as XML/HTML)
+        const contentType = response.headers['content-type'] || '';
+        if (!contentType.includes('json')) {
+          throw new Error(`Non-JSON response from ${requestData.url}: ${contentType}`);
+        }
+        return response;
+      } catch (error) {
+        // Re-throw with context without leaking sensitive URLs
+        const shortUrl = requestData.url.replace(/^https?:\/\//, '').split('/')[0];
+        throw new Error(`RPC call to ${shortUrl} failed: ${error.message}`);
+      }
     },
     async getCurrencyDetails(rpcUrl, currencyid, useRpc = true) {
       if (useRpc) {
