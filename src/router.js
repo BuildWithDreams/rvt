@@ -43,17 +43,17 @@ const currencyDictionary = [
 
 const routes = [
   { path: '/', component: Home },
-  { path: '/bridge-veth', component: VerusBasketView, props: {fullyQualifiedName: 'Bridge.vETH', currencyDictionary: currencyDictionary, rpcUrl: rpc_verusd}},
-  { path: '/pure', component: VerusBasketView, props: {fullyQualifiedName: 'Pure', currencyDictionary: currencyDictionary, rpcUrl: rpc_verusd}},
-  { path: '/nati-owl', component: VerusBasketView, props: {fullyQualifiedName: 'iH37kRsdfoHtHK5TottP1Yfq8hBSHz9btw', currencyDictionary: currencyDictionary, rpcUrl: rpc_verusd}},
-  { path: '/supervrsc', component: VerusBasketView, props: {fullyQualifiedName: 'SUPERVRSC', currencyDictionary: currencyDictionary, rpcUrl: rpc_verusd}},
-  { path: '/bridge-varrr', component: VerusBasketView, props: {fullyQualifiedName: 'Bridge.vARRR', currencyDictionary: currencyDictionary, rpcUrl: rpc_verusdvarrr}},
-  { path: '/bridge-vdex', component: VerusBasketView, props: {fullyQualifiedName: 'Bridge.vDEX', currencyDictionary: currencyDictionary, rpcUrl: rpc_verusdvdex}},
-  { path: '/vyield', component: VerusBasketView, props: {fullyQualifiedName: 'vYIELD', currencyDictionary: currencyDictionary, rpcUrl: rpc_verusd}},
-  { path: '/switch', component: VerusBasketView, props: {fullyQualifiedName: 'Switch', currencyDictionary: currencyDictionary, rpcUrl: rpc_verusd}},
-  { path: '/kaiju', component: VerusBasketView, props: {fullyQualifiedName: 'Kaiju', currencyDictionary: currencyDictionary, rpcUrl: rpc_verusd}},
-  { path: '/super-basket', component: VerusBasketView, props: {fullyQualifiedName: 'SUPER🛒', currencyDictionary: currencyDictionary, rpcUrl: rpc_verusd}},
-  { path: '/bridge-chips', component: VerusBasketView, props: {fullyQualifiedName: 'Bridge.Chips', currencyDictionary: currencyDictionary, rpcUrl: rpc_chips}}
+  { path: '/bridge-veth', component: VerusBasketView, props: {fullyQualifiedName: 'Bridge.vETH', currencyid: 'i3f7tSctFkiPpiedY8QR5Tep9p4qDVebDx', currencyDictionary: currencyDictionary, rpcUrl: rpc_verusd}},
+  { path: '/pure', component: VerusBasketView, props: {fullyQualifiedName: 'Pure', currencyid: 'iHax5qYQGbcMGqJKKrPorpzUBX2oFFXGnY', currencyDictionary: currencyDictionary, rpcUrl: rpc_verusd}},
+  { path: '/nati-owl', component: VerusBasketView, props: {fullyQualifiedName: 'NATI.Owl', currencyid: 'iH37kRsdfoHtHK5TottP1Yfq8hBSHz9btw', currencyDictionary: currencyDictionary, rpcUrl: rpc_verusd}},
+  { path: '/supervrsc', component: VerusBasketView, props: {fullyQualifiedName: 'SUPERVRSC', currencyid: 'iHnYAmrS45Hb8GVgyzy7nVQtZ5vttJ9N3X', currencyDictionary: currencyDictionary, rpcUrl: rpc_verusd}},
+  { path: '/bridge-varrr', component: VerusBasketView, props: {fullyQualifiedName: 'Bridge.vARRR', currencyid: 'iD5WRg7jdQM1uuoVHsBCAEKfJCKGs1U3TB', currencyDictionary: currencyDictionary, rpcUrl: rpc_verusdvarrr}},
+  { path: '/bridge-vdex', component: VerusBasketView, props: {fullyQualifiedName: 'Bridge.vDEX', currencyid: 'i6j1rzjgrDhSmUYiTtp21J8Msiudv5hgt9', currencyDictionary: currencyDictionary, rpcUrl: rpc_verusdvdex}},
+  { path: '/vyield', component: VerusBasketView, props: {fullyQualifiedName: 'vYIELD', currencyid: 'iAik7rePReFq2t7LZMZhHCJ52fT5pisJ5C', currencyDictionary: currencyDictionary, rpcUrl: rpc_verusd}},
+  { path: '/switch', component: VerusBasketView, props: {fullyQualifiedName: 'Switch', currencyid: 'i4Xr5TAMrDTD99H69EemhjDxJ4ktNskUtc', currencyDictionary: currencyDictionary, rpcUrl: rpc_verusd}},
+  { path: '/kaiju', component: VerusBasketView, props: {fullyQualifiedName: 'Kaiju', currencyid: 'i9kVWKU2VwARALpbXn4RS9zvrhvNRaUibb', currencyDictionary: currencyDictionary, rpcUrl: rpc_verusd}},
+  { path: '/super-basket', component: VerusBasketView, props: {fullyQualifiedName: 'SUPER🛒', currencyid: 'iFrFn9b6ctse7XBzcWkRbpYMAHoKjbYKqG', currencyDictionary: currencyDictionary, rpcUrl: rpc_verusd}},
+  { path: '/bridge-chips', component: VerusBasketView, props: {fullyQualifiedName: 'Bridge.Chips', currencyid: 'i3nokiCTVevZMLpR3VmZ7YDfCqA5juUqqH', currencyDictionary: currencyDictionary, rpcUrl: rpc_chips}}
 ]
 
 const router = createRouter({

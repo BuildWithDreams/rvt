@@ -138,6 +138,7 @@ import { ref, onMounted } from 'vue';
 export default {
     props: [
         'fullyQualifiedName',//: String, //'fullyQualifiedName',
+        'currencyid',
         'reserveCurrencies', //: [Object] //'reserveCurrencies',
         'supply', // String
         'chartLink',

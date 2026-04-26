@@ -30,7 +30,7 @@
         />
       </div>
       
-      <VerusBasket v-for="basket of filteredAndOrderedBaskets" :key="basket.currencyid" v-bind:fullyQualifiedName="basket.ticker" v-bind:webLink="basket.website"
+      <VerusBasket v-for="basket of filteredAndOrderedBaskets" :key="basket.currencyid" v-bind:fullyQualifiedName="basket.ticker" v-bind:currencyid="basket.currencyid" v-bind:webLink="basket.website"
         v-bind:chartLink="basket.chart" v-bind:recentTransfersLink="basket.recenttransfers"
         v-bind:marketNote="basket.marketnote" v-bind:explorerLink="basket.explorer" v-bind:supply="basket.supply"
         v-bind:bestHeight="basket.bestheight" v-bind:reserveCurrencies="basket.reservecurrencies"
@@ -41,7 +41,7 @@
 
     <input type="radio" name="my_tabs_2" class="tab" aria-label="VRSCTEST" />
     <div class="tab-content border-base-300 bg-base-100 p-10">
-      <VerusBasket v-for="basket of vrsctest_baskets" v-bind:fullyQualifiedName="basket.ticker"
+      <VerusBasket v-for="basket of vrsctest_baskets" v-bind:fullyQualifiedName="basket.ticker" v-bind:currencyid="basket.currencyid"
         v-bind:webLink="basket.website" v-bind:chartLink="basket.chart"
         v-bind:recentTransfersLink="basket.recenttransfers" v-bind:marketNote="basket.marketnote"
         v-bind:explorerLink="basket.explorer" v-bind:supply="basket.supply" v-bind:bestHeight="basket.bestheight"

@@ -82,6 +82,7 @@ import axios from 'axios';
 export default {
     props: [
         'fullyQualifiedName',//: String, //'fullyQualifiedName',
+        'currencyid',
         //'reserveCurrencies', //: [Object] //'reserveCurrencies',
         //'supply', // String
         'rpcUrl',
@@ -183,7 +184,7 @@ export default {
                 headers: { 'Content-Type': 'application/json' },
                 data: {
                     method: 'getcurrency',
-                    params: [this.fullyQualifiedName],
+                    params: [this.currencyid],
                     id: 1
                 }
             };
