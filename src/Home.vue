@@ -10,7 +10,7 @@
       href="https://insight.verus.io/address/VERUSTRADING@">VERUSTRADING@</a> and <a class="link link-info"
       target="_blank" href="https://insight.verus.io/address/verus%20coin%20foundation@">Verus Coin Foundation@</a>
     Staking =>
-    <span v-for="chain in chains">{{ chain.toUpperCase() }}: {{ stakingsupply[chain] }} || </span>
+
   </div>
   <div class="p-2">ARB Markets [BETA]
     <a class="link link-info" target="_blank" href="https://markets.verus.trading">https://markets.verus.trading</a>
@@ -228,26 +228,29 @@ export default {
         this.stakingsupply[chain] = Math.trunc(data.stakingsupply);
       } catch (fetchError) {
         console.error(`Failed to fetch or parse local staking data for ${chain}:`, fetchError);
-        const requestData = {
-          method: 'post',
-          url: 'https://rpc.' + chain + '.syncproof.net',
-          headers: { 'Content-Type': 'application/json' },
-          data: {
-            method: 'getmininginfo',
-            params: [],
-            id: 999
+        if (chain === 'vrsc') {
+          const requestData = {
+            method: 'post',
+            url: 'https://rpc.vrsc.syncproof.net',
+            headers: { 'Content-Type': 'application/json' },
+            data: {
+              method: 'getmininginfo',
+              params: [],
+              id: 999
+            }
           }
+          this.sendRequestRPC(requestData)
+            .then((response) => {
+              this.stakingsupply[chain] = Math.trunc(response.data.result.stakingsupply)
+            })
+            .catch((error) => {
+              console.log(`RPC for ${chain} failed: ${error.message}`);
+              this.stakingsupply[chain] = 'N/A';
+            })
+        } else {
+          this.stakingsupply[chain] = 'N/A';
         }
-        this.sendRequestRPC(requestData)
-          .then((response) => {
-            this.stakingsupply[chain] = Math.trunc(response.data.result.stakingsupply)
-          })
-          .catch(async (error) => {
-            console.log(`RPC for ${chain} failed, falling back to local file: ${error.message}`);
-            this.stakingsupply[chain] = 'N/A';
-
-          })
-        }
+      }
     },
     getLatestBlock() {
       const requestData = {
