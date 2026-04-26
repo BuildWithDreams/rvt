@@ -4,16 +4,11 @@
     Dark/Light <input type="checkbox" value="garden" class="toggle theme-controller" />
   </div>
   <div class="p-2">
-    These are the raw tables of Verus Trading (<a class="link link-info" target="_blank" href="https://hopiumbuilders.com/docs/recent-projects/verustrading/raw">About RVT by Hopium Builders</a>).
+    These are the VRSC mainnet raw verus trading (<a class="link link-info" target="_blank" href="https://raw.verus.trading">rvt</a>) tables of basket currencies parsed from getcurrency rpc (<a class="link link-info" target="_blank" href="https://github.com/BuildWithDreams/rvt">GitHub Repo</a>).
   </div>
-  <div class="p-2">Donations Always Appreciated: <a class="link link-info" target="_blank"
-      href="https://insight.verus.io/address/VERUSTRADING@">VERUSTRADING@</a> and <a class="link link-info"
-      target="_blank" href="https://insight.verus.io/address/verus%20coin%20foundation@">Verus Coin Foundation@</a>
-    Staking =>
+  <div class="p-2">
+    Staking => {{ stakingsupply["vrsc"] }}
 
-  </div>
-  <div class="p-2">ARB Markets [BETA]
-    <a class="link link-info" target="_blank" href="https://markets.verus.trading">https://markets.verus.trading</a>
   </div>
   <div class="p-2">Binance prices: BTCUSD: {{ parseFloat(binance_btcusd).toFixed(2) }} , ETHUSD: {{
     parseFloat(binance_ethusd).toFixed(2) }} , ETHBTC: {{
@@ -38,31 +33,7 @@
 
 
     </div>
-
-    <input type="radio" name="my_tabs_2" class="tab" aria-label="VRSCTEST" />
-    <div class="tab-content border-base-300 bg-base-100 p-10">
-      <VerusBasket v-for="basket of vrsctest_baskets" v-bind:fullyQualifiedName="basket.ticker" v-bind:currencyid="basket.currencyid"
-        v-bind:webLink="basket.website" v-bind:chartLink="basket.chart"
-        v-bind:recentTransfersLink="basket.recenttransfers" v-bind:marketNote="basket.marketnote"
-        v-bind:explorerLink="basket.explorer" v-bind:supply="basket.supply" v-bind:bestHeight="basket.bestheight"
-        v-bind:reserveCurrencies="basket.reservecurrencies" v-bind:currencyDictionary="vrsctest_currencyDictionary"
-        v-bind:isExtrasOverride="false" />
-    </div>
   </div>
-
-
-
-
-  <!-- <VerusBasket v-if="verusSyncOK" v-bind:fullyQualifiedName="BRIDGEVETH" v-bind:webLink="bridgevethwebsite"
-      v-bind:chartLink="bridgevethchart" v-bind:recentTransfersLink="bridgevethrecenttransfers" v-bind:marketNote="bridgevethmarketnote"
-      v-bind:explorerLink="verusexplorer" v-bind:supply="bridgevethsupply" v-bind:bestHeight="bridgevethbestheight"
-      v-bind:reserveCurrencies="bridgevethreservecurrencies" v-bind:currencyDictionary="currencyDictionary"
-      v-bind:pureBasketPriceTbtcVrsc="pureTbtcVrsc"/>
-    <p v-else>{{ BRIDGEVETH }} is not ready - syncing data <span v-if="verusBlocksRemaining">{{ verusBlocksRemaining }}
-        blocks to go</span></p>
-
-    <div class="divider"></div> -->
-
 </template>
 
 <script>
@@ -81,7 +52,7 @@ export default {
   },
   data() {
     return {
-      chains: ['vrsc', 'varrr', 'vdex', 'chips'],
+      chains: ['vrsc'],
       explorertx: "https://insight.verus.io/tx/",
       veruslatestblock: ref(),
       veruslongestchain: ref(),
@@ -103,9 +74,7 @@ export default {
       chips_staking: ref(),
       currencyDictionary: [],
       baskets: ref([]),
-      basketSettings: {},
-      vrsctest_currencyDictionary: [],
-      vrsctest_baskets: ref([])
+      basketSettings: {}
     };
   },
   computed: {
@@ -282,22 +251,39 @@ export default {
         })
     },
     async sendRequestRPC(requestData) {
+      console.log(requestData)
       try {
         const response = await axios({
           method: requestData.method,
           url: requestData.url,
-          headers: requestData.headers,
-          data: requestData.data
+          headers: {
+            Accept: 'application/json',
+            ...(requestData.headers || {})
+          },
+          data: requestData.data,
+          responseType: 'text'
         });
-        // Guard against non-JSON responses (e.g. nginx error pages as XML/HTML)
-        const contentType = response.headers['content-type'] || '';
-        if (!contentType.includes('json')) {
-          throw new Error(`Non-JSON response from ${requestData.url}: ${contentType}`);
+
+        // Some RPC endpoints return JSON without a Content-Type header.
+        const parsedData = typeof response.data === 'string'
+          ? JSON.parse(response.data)
+          : response.data;
+
+        if (!parsedData || typeof parsedData !== 'object') {
+          throw new Error('RPC response is not a valid JSON object');
         }
-        return response;
+
+        return {
+          ...response,
+          data: parsedData
+        };
       } catch (error) {
+        console.log(error)
         // Re-throw with context without leaking sensitive URLs
         const shortUrl = requestData.url.replace(/^https?:\/\//, '').split('/')[0];
+        if (error instanceof SyntaxError) {
+          throw new Error(`RPC call to ${shortUrl} returned non-JSON content`);
+        }
         throw new Error(`RPC call to ${shortUrl} failed: ${error.message}`);
       }
     },
@@ -315,6 +301,7 @@ export default {
             }
           };
           const response = await this.sendRequestRPC(requestData)
+          console.log(response)
           const result = response.data.result
           return {
             reservecurrencies: result.bestcurrencystate.reservecurrencies,
@@ -426,23 +413,16 @@ export default {
     this.loadBasketSettings();
     
     try {
-      const [response1, response2, response3, response4] = await Promise.all([
+      const [response1, response2] = await Promise.all([
         fetch('/currencies.json'),
-        fetch('/baskets.json'),
-        fetch('/vrsctest_currencies.json'),
-        fetch('/vrsctest_baskets.json')
+        fetch('/baskets.json')
       ]);
 
       const data1 = await response1.json()
       const data2 = await response2.json()
-      const data3 = await response3.json()
-      const data4 = await response4.json()
-
 
       this.currencyDictionary = data1
       this.baskets = data2
-      this.vrsctest_currencyDictionary = data3
-      this.vrsctest_baskets = data4
     } catch (error) {
       console.log(error)
     }
@@ -475,33 +455,6 @@ export default {
     } catch (error) {
       console.error('Error loading JSON files or fetching details:', error);
     }
-
-
-    try {
-      // Fetch details for each basket and update the array
-      const fetchPromises = this.vrsctest_baskets.map(async (basket, index) => {
-        const details = await this.getCurrencyDetails(basket.rpc, basket.currencyid);
-        if (details) {
-          console.log(`Updating basket ${basket.ticker} with:`, details);
-          // Update the basket in place
-          this.vrsctest_baskets[index] = {
-            ...basket,
-            reservecurrencies: details.reservecurrencies,
-            supply: details.supply,
-            bestheight: details.bestheight,
-          }
-        }
-        else {
-          console.warn(`No details fetch for ${basket.currencyid}`);
-        }
-      })
-
-      // Wait for all fetches to complete
-      await Promise.all(fetchPromises);
-    } catch (error) {
-      console.error('Error loading JSON files or fetching details:', error);
-    }
-
   },
   async mounted() {
     this.getLatestBlock()
